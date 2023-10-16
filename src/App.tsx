@@ -1,26 +1,20 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { LayoutContextProvider } from './components/context/layoutContext'
+import LoginContainer from './pages/login/loginContainer'
+import HRDashboardContainer from './pages/HRDashboard/HRDashboardContainer'
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Router>
+      <LayoutContextProvider>
+        <Routes>
+          <Route path="/login" element={<LoginContainer />} />
+          <Route path="/dashboard" element={<HRDashboardContainer />} />
+        </Routes>
+      </LayoutContextProvider>
+    </Router>
+  )
 }
 
-export default App;
+export default App
