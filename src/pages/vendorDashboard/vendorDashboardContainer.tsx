@@ -1,17 +1,16 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import React, { type FC, useState, useEffect } from 'react'
-import HRDashboardScene from './HRDashboardScene'
+import VendorDashboardScene from './vendorDashboardScene'
+import { getHREventAPI } from '../../utils/api'
 import { Button } from 'antd'
-import { getHREventAPI, getVendorListAPI } from '../../utils/api'
 
-const HRDashboardContainer: FC = () => {
+const VendorDashboardContainer: FC = () => {
   const [tableloading, setTableLoading] = useState(false)
   const [HREventList, setHREventList]: any = useState(null)
   const [eventData, setEventData] = useState([])
   const [isModelOpen, setIsModelOpen] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState(null)
-  const [isCreateEventModelOpen, setIsCreateEventModelOpen] = useState(false)
-  const [vendorsData, setVendorData] = useState(null)
+  const [eventAction, setEventAction] = useState<string | null>(null)
 
   const columns = [
     {
@@ -51,17 +50,14 @@ const HRDashboardContainer: FC = () => {
 
   const handleModal = (record: any): any => {
     setIsModelOpen(true)
-    setSelectedEvent(record)
+    const selectedEvt = HREventList.find((evt: any) => evt?.id === record?.id)
+    setSelectedEvent(selectedEvt)
   }
 
   const closeModel = (): void => {
     setIsModelOpen(false)
     setSelectedEvent(null)
-  }
-
-  const closeCreateEventModel = (): void => {
     getHREvents(false)
-    setIsCreateEventModelOpen(false)
   }
 
   const action = (record: any): any => (
@@ -77,62 +73,41 @@ const HRDashboardContainer: FC = () => {
       }
       setTableLoading(false)
     } catch (error) {
-      setTableLoading(false)
       console.error('get HR event error : ', error)
-    }
-  }
-
-  const getVendorList = async (): Promise<any> => {
-    try {
-      const res = await getVendorListAPI()
-      if (res?.status === 'success') {
-        const vendors = res?.data && res?.data?.length > 0
-          ? res?.data?.map((vendor: any) => ({
-            value: vendor?.id,
-            label: vendor?.name
-          }))
-          : null
-        setVendorData(vendors)
-      }
-    } catch (error) {
-      console.error('get vendor list : ', error)
+      setTableLoading(false)
     }
   }
 
   useEffect(() => {
     getHREvents(true)
-    getVendorList()
   }, [])
 
   useEffect(() => {
     if (HREventList && HREventList?.length > 0) {
       const updateEventData = HREventList.map((event: any) => ({
-        id: event?.id,
+        id: event.id,
         eventName: event?.name,
         vendorName: event?.vendor?.name,
         confirmedDate: event?.confirmedDate,
-        proposedDates: event?.proposedDates,
         status: event?.status,
-        createdAt: event?.createdAt
+        createdAt: event.createdAt
       }))
       setEventData(updateEventData)
     }
   }, [HREventList])
 
   return (
-    <HRDashboardScene {...{
+    <VendorDashboardScene {...{
       data: eventData,
       tableloading,
       columns,
       isModelOpen,
       selectedEvent,
       closeModel,
-      isCreateEventModelOpen,
-      setIsCreateEventModelOpen,
-      vendorsData,
-      closeCreateEventModel
+      setEventAction,
+      eventAction
     }} />
   )
 }
 
-export default HRDashboardContainer
+export default VendorDashboardContainer
