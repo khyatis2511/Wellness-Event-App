@@ -1,4 +1,6 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios'
+import { dateFormat } from './constants'
+import dayjs from 'dayjs'
 
 export const deepClone = (obj: any): any => {
   return JSON.parse(JSON.stringify(obj))
@@ -25,3 +27,5 @@ export const axiosAPI: (config: AxiosRequestConfig) => Promise<any> = async (con
     }
   }
 }
+
+export const formatDate = (date: string): string => dayjs(new Date(date)).format(dateFormat)

@@ -16,6 +16,7 @@
     ],
     "rules": {
         "@typescript-eslint/strict-boolean-expressions": "off",
-        "@typescript-eslint/no-unused-vars": "Off"
+        "@typescript-eslint/no-unused-vars": "Off",
+        "react/react-in-jsx-scope": "off"
     }
 }
