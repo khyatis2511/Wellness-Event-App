@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import React, { type FC, useState, useEffect } from 'react'
 import VendorDashboardScene from './vendorDashboardScene'
-import { getHREventAPI } from '../../utils/api'
+import { getEventListAPI } from '../../utils/api'
 import { Button } from 'antd'
+import { formatDate } from '../../utils/helpers'
 
 const VendorDashboardContainer: FC = () => {
   const [tableloading, setTableLoading] = useState(false)
@@ -19,17 +20,22 @@ const VendorDashboardContainer: FC = () => {
       key: 'eventName'
     },
     {
-      title: 'Vendor Name',
-      dataIndex: 'vendorName',
-      key: 'vendorName'
-    },
-    {
       title: 'Confirmed Date',
       dataIndex: 'confirmedDate',
       key: 'confirmedDate',
-      render: (text: any, record: any) => (
-        <span>{record.confirmedDate}</span>
-      )
+      render: (text: any, record: any) => {
+        if (record.confirmedDate) {
+          return (
+            <span>{record.confirmedDate}</span>
+          )
+        } else {
+          return (
+            <>
+            {record.proposedDates?.map((date: string) => <p key={date}>{date}</p>)}
+            </>
+          )
+        }
+      }
     },
     {
       title: 'Status',
@@ -39,7 +45,8 @@ const VendorDashboardContainer: FC = () => {
     {
       title: 'Date Created',
       dataIndex: 'createdAt',
-      key: 'createdAt'
+      key: 'createdAt',
+      render: (text: any, record: any) => formatDate(record.createdAt)
     },
     {
       title: 'Action',
@@ -55,19 +62,26 @@ const VendorDashboardContainer: FC = () => {
   }
 
   const closeModel = (): void => {
+    setEventAction(null)
     setIsModelOpen(false)
     setSelectedEvent(null)
-    getHREvents(false)
+  }
+
+  const updateCloseModel = (): void => {
+    setEventAction(null)
+    setIsModelOpen(false)
+    setSelectedEvent(null)
+    getVenderEvents(false)
   }
 
   const action = (record: any): any => (
     <Button type="primary" onClick={() => handleModal(record)}>View</Button>
   )
 
-  const getHREvents = async (showLoader: boolean): Promise<any> => {
+  const getVenderEvents = async (showLoader: boolean): Promise<any> => {
     try {
       setTableLoading(showLoader)
-      const eventRes = await getHREventAPI()
+      const eventRes = await getEventListAPI()
       if (eventRes) {
         setHREventList(eventRes)
       }
@@ -79,7 +93,7 @@ const VendorDashboardContainer: FC = () => {
   }
 
   useEffect(() => {
-    getHREvents(true)
+    getVenderEvents(true)
   }, [])
 
   useEffect(() => {
@@ -89,6 +103,7 @@ const VendorDashboardContainer: FC = () => {
         eventName: event?.name,
         vendorName: event?.vendor?.name,
         confirmedDate: event?.confirmedDate,
+        proposedDates: event?.proposedDates,
         status: event?.status,
         createdAt: event.createdAt
       }))
@@ -104,6 +119,7 @@ const VendorDashboardContainer: FC = () => {
       isModelOpen,
       selectedEvent,
       closeModel,
+      updateCloseModel,
       setEventAction,
       eventAction
     }} />

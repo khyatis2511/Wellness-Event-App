@@ -11,7 +11,7 @@ export const API = (force = false): AxiosInstance => {
   if (axiosInstance && !force) {
     return axiosInstance
   }
-  axiosInstance = axios.create({ baseURL: 'http://localhost:1400' })
+  axiosInstance = axios.create({ baseURL: `${process.env.REACT_APP_API_END_POINT}` })
   return axiosInstance
 }
 

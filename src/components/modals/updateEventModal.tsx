@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Button, DatePicker, Form, Input } from 'antd'
-import dayjs from 'dayjs'
-import React, { useState } from 'react'
+import { Button, Form, Input, Select } from 'antd'
+import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { updateEventAPI } from '../../utils/api'
-import { dateFormat } from '../../utils/constants'
 import { formatDate } from '../../utils/helpers'
 import { UpdateEventSchema, type UpdateEventSchemaInput } from '../../utils/schema/eventSchema'
 import { EventStatus } from '../../utils/types'
@@ -14,10 +12,13 @@ interface UpdateEventFormProps {
   status: string
   eventId: string
   onClose: () => void
+  proposedDates: any
+
 }
 
-const UpdateEventForm: React.FC<UpdateEventFormProps> = ({ status, eventId, onClose }) => {
+const UpdateEventForm: React.FC<UpdateEventFormProps> = ({ status, eventId, onClose, proposedDates }) => {
   const [isSubmitLoading, setSubmitLoading] = useState(false)
+  const [dateOption, setDateOption] = useState([])
 
   const {
     control,
@@ -50,6 +51,18 @@ const UpdateEventForm: React.FC<UpdateEventFormProps> = ({ status, eventId, onCl
     }
   }
 
+  useEffect(() => {
+    if (proposedDates && proposedDates?.length > 0) {
+      const dateOpt = proposedDates.map((date: string) => ({
+        value: date,
+        lable: date
+      }))
+      setDateOption(dateOpt)
+    } else {
+      setDateOption([])
+    }
+  }, [proposedDates])
+
   return (
       <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
         {status === EventStatus.REJECTED && <Form.Item
@@ -72,13 +85,11 @@ const UpdateEventForm: React.FC<UpdateEventFormProps> = ({ status, eventId, onCl
             name="confirmedDate"
             control={control}
             render={({ field }) => (
-              <DatePicker
+              <Select
                 {...field}
-                value={field.value ? dayjs(field.value) : null}
-                format={dateFormat}
-                onChange={(date) => {
-                  field.onChange(date ? dayjs(date).toDate() : null)
-                }}
+                placeholder="Select Confirmed Date"
+                style={{ width: 120 }}
+                options={dateOption}
               />
             )}
           />

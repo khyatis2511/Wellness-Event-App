@@ -26,7 +26,7 @@ export const getVendorListAPI = async (): Promise<any> => {
   })
 }
 
-export const getHREventAPI = async (): Promise<any> => {
+export const getEventListAPI = async (): Promise<any> => {
   return await axiosAPI({
     url: '/event',
     method: 'GET'

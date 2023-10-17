@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Form, Input, DatePicker, Button, Select } from 'antd'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -15,9 +15,10 @@ interface EventFormProps {
   isModelOpen: boolean
   onClose: () => void
   vendorOption: any
+  onSubmitClose: () => void
 }
 
-const EventForm: React.FC<EventFormProps> = ({ isModelOpen, onClose, vendorOption }) => {
+const EventForm: React.FC<EventFormProps> = ({ isModelOpen, onClose, onSubmitClose, vendorOption }) => {
   const [isSubmitLoading, setSubmitLoading] = useState(false)
 
   const { loginUserData } = useContext(LayoutContext)
@@ -46,7 +47,7 @@ const EventForm: React.FC<EventFormProps> = ({ isModelOpen, onClose, vendorOptio
       }
       const res = await createEventAPI(payload)
       if (res?.status === 'success') {
-        onClose()
+        onSubmitClose()
       }
       setSubmitLoading(false)
     } catch (error) {
