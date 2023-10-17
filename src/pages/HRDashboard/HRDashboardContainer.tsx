@@ -2,7 +2,7 @@
 import React, { type FC, useState, useEffect } from 'react'
 import HRDashboardScene from './HRDashboardScene'
 import { Button } from 'antd'
-import { getHREventAPI, getVendorListAPI } from '../../utils/api'
+import { getEventListAPI, getVendorListAPI } from '../../utils/api'
 
 const HRDashboardContainer: FC = () => {
   const [tableloading, setTableLoading] = useState(false)
@@ -28,9 +28,19 @@ const HRDashboardContainer: FC = () => {
       title: 'Confirmed Date',
       dataIndex: 'confirmedDate',
       key: 'confirmedDate',
-      render: (text: any, record: any) => (
-        <span>{record.confirmedDate}</span>
-      )
+      render: (text: any, record: any) => {
+        if (record.confirmedDate) {
+          return (
+            <span>{record.confirmedDate}</span>
+          )
+        } else {
+          return (
+            <>
+            {record.proposedDates?.map((date: string) => <p key={date}>{date}</p>)}
+            </>
+          )
+        }
+      }
     },
     {
       title: 'Status',
@@ -51,7 +61,8 @@ const HRDashboardContainer: FC = () => {
 
   const handleModal = (record: any): any => {
     setIsModelOpen(true)
-    setSelectedEvent(record)
+    const selectedEvt = HREventList.find((evt: any) => evt?.id === record?.id)
+    setSelectedEvent(selectedEvt)
   }
 
   const closeModel = (): void => {
@@ -71,7 +82,7 @@ const HRDashboardContainer: FC = () => {
   const getHREvents = async (showLoader: boolean): Promise<any> => {
     try {
       setTableLoading(showLoader)
-      const eventRes = await getHREventAPI()
+      const eventRes = await getEventListAPI()
       if (eventRes) {
         setHREventList(eventRes)
       }

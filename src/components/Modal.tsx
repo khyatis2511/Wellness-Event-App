@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 // Modal.tsx
 
+import { Button } from 'antd'
 import React, { useState, type ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 
@@ -28,9 +29,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
     ? ReactDOM.createPortal(
         <div style={modalStyle}>
           <div className="modal-content">
-            <span className="close" onClick={onClose}>
-              &times;
-            </span>
+            <Button className="close" onClick={onClose}>
+              <b>&times;</b>
+            </Button>
             {children}
           </div>
         </div>,

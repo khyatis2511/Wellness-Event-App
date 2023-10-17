@@ -38,11 +38,15 @@ const HRDashboardScene: FC<HRDashboardSceneProps> = (props) => {
       </Button>
       <TableComponent dataSource={data} columns={columns} loading={tableloading} />
       <Modal isOpen={isModelOpen} onClose={closeModel}>
-        <h1>{selectedEvent?.eventName}</h1>
+        <h2>Event Name: {selectedEvent?.name}</h2>
+        <h3>Location: </h3>
+        <p>Postal Code: {selectedEvent?.proposedLocation?.postalCode}</p>
+        <p>Street Name: {selectedEvent?.proposedLocation?.streetName}</p>
       </Modal>
       <EventForm
         isModelOpen={isCreateEventModelOpen}
-        onClose={closeCreateEventModel}
+        onClose={() => { setIsCreateEventModelOpen(false) }}
+        onSubmitClose={closeCreateEventModel}
         vendorOption={vendorsData}
       />
     </div>

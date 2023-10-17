@@ -12,6 +12,7 @@ interface VendorDashboardSceneProps {
   isModelOpen: boolean
   selectedEvent: any
   closeModel: () => void
+  updateCloseModel: () => void
   eventAction: string | null
   setEventAction: Dispatch<SetStateAction<string | null>>
 }
@@ -24,6 +25,7 @@ const VendorDashboardScene: FC<VendorDashboardSceneProps> = (props) => {
     isModelOpen,
     selectedEvent,
     closeModel,
+    updateCloseModel,
     eventAction,
     setEventAction
   } = props
@@ -45,7 +47,12 @@ const VendorDashboardScene: FC<VendorDashboardSceneProps> = (props) => {
           </Button>
         </>}
         {eventAction && (
-          <UpdateEventForm status={eventAction} eventId={selectedEvent?.id} onClose={closeModel} />
+          <UpdateEventForm
+          status={eventAction}
+          eventId={selectedEvent?.id}
+          onClose={updateCloseModel}
+          proposedDates={selectedEvent?.proposedDates}
+          />
         )}
       </Modal>
     </div>
