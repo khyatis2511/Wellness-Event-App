@@ -11,7 +11,7 @@ export const API = (force = false): AxiosInstance => {
   if (axiosInstance && !force) {
     return axiosInstance
   }
-  axiosInstance = axios.create({ baseURL: `${process.env.REACT_APP_API_END_POINT}` })
+  axiosInstance = axios.create({ baseURL: process.env.REACT_APP_API_END_POINT ? process.env.REACT_APP_API_END_POINT : 'http://localhost:1400' })
   return axiosInstance
 }
 
@@ -20,10 +20,11 @@ export const axiosAPI: (config: AxiosRequestConfig) => Promise<any> = async (con
     const response = await API().request(config)
     return response?.data
   } catch (e: any) {
-    if (e?.error?.response?.data?.message) {
-      throw new Error(e.error.response.data.message || 'Bad response from server')
+    console.log('e :', e)
+    if (e?.response?.data?.message) {
+      throw new Error(e.response.data.message || 'Bad response from server')
     } else {
-      throw new Error(e?.error?.message || 'Bad response from server')
+      throw new Error(e?.message || 'Bad response from server')
     }
   }
 }

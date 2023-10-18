@@ -6,19 +6,28 @@ import { Controller, useForm } from 'react-hook-form'
 import { updateEventAPI } from '../../utils/api'
 import { formatDate } from '../../utils/helpers'
 import { UpdateEventSchema, type UpdateEventSchemaInput } from '../../utils/schema/eventSchema'
-import { EventStatus } from '../../utils/types'
+import { type DropdownObject, EventStatus } from '../../utils/types'
+import { SUCCESS_MESSAGE } from '../../utils/constants'
+import { toasterConfig } from '../context/layoutContext'
+import { toast } from 'react-toastify'
+
+interface UpdateEventPayload {
+  status: string
+  confirmedDate?: string
+  remarks?: string
+}
 
 interface UpdateEventFormProps {
   status: string
   eventId: string
   onClose: () => void
-  proposedDates: any
+  proposedDates: string[]
 
 }
 
 const UpdateEventForm: React.FC<UpdateEventFormProps> = ({ status, eventId, onClose, proposedDates }) => {
   const [isSubmitLoading, setSubmitLoading] = useState(false)
-  const [dateOption, setDateOption] = useState([])
+  const [dateOption, setDateOption] = useState<DropdownObject[] | []>([])
 
   const {
     control,
@@ -28,10 +37,10 @@ const UpdateEventForm: React.FC<UpdateEventFormProps> = ({ status, eventId, onCl
     resolver: yupResolver(UpdateEventSchema(status))
   })
 
-  const onSubmit = async (values: UpdateEventSchemaInput): Promise<any> => {
+  const onSubmit = async (values: UpdateEventSchemaInput): Promise<void> => {
     try {
       setSubmitLoading(true)
-      const payload: any = {
+      const payload: UpdateEventPayload = {
         status
       }
       if (status === EventStatus.APPROVED) {
@@ -43,10 +52,12 @@ const UpdateEventForm: React.FC<UpdateEventFormProps> = ({ status, eventId, onCl
       const res = await updateEventAPI({ eventId, payload })
       if (res?.status === 'success') {
         onClose()
+        toast.success(SUCCESS_MESSAGE.event.update, toasterConfig)
       }
       setSubmitLoading(false)
-    } catch (error) {
+    } catch (error: any) {
       setSubmitLoading(false)
+      toast.error(error.message, toasterConfig)
       console.error('onsubmit event: ', error)
     }
   }
@@ -55,7 +66,7 @@ const UpdateEventForm: React.FC<UpdateEventFormProps> = ({ status, eventId, onCl
     if (proposedDates && proposedDates?.length > 0) {
       const dateOpt = proposedDates.map((date: string) => ({
         value: date,
-        lable: date
+        label: date
       }))
       setDateOption(dateOpt)
     } else {

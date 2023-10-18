@@ -1,14 +1,29 @@
 import { type AxiosInstance } from 'axios'
-import React, { type FC, createContext, useState, type Dispatch, type SetStateAction, useEffect } from 'react'
+import React, { type FC, createContext, useState, type Dispatch, type SetStateAction, useEffect, type ReactNode } from 'react'
 import { API } from '../../utils/helpers'
 import { useCookies } from 'react-cookie'
 import { useNavigate } from 'react-router-dom'
 import { whoAmI } from '../../utils/api'
+import { type ToastOptions, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const toasterConfig: ToastOptions<{}> = {
+  position: 'bottom-right',
+  autoClose: 5000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined
+}
 
 interface LoginUserData {
   id: string
+  name: string
   email: string
   role: string
+  companyName: string | null
 }
 
 interface LayoutContextProps {
@@ -16,13 +31,18 @@ interface LayoutContextProps {
   setLoginUserData: Dispatch<SetStateAction<LoginUserData | null>>
 }
 
+interface LayoutContextProviderProps {
+  children: ReactNode
+}
+
 const initialState: LayoutContextProps = {
   loginUserData: null,
-  setLoginUserData: (data: any) => {}
+  setLoginUserData: (data: unknown) => {}
 }
+
 export const LayoutContext = createContext(initialState)
 
-export const LayoutContextProvider: FC<any> = ({ children }) => {
+export const LayoutContextProvider: FC<LayoutContextProviderProps> = ({ children }) => {
   const [loginUserData, setLoginUserData] = useState<LoginUserData | null>(initialState.loginUserData)
   const [initialLoading, setInitialLoading] = useState(true)
 
@@ -58,7 +78,7 @@ export const LayoutContextProvider: FC<any> = ({ children }) => {
     }
   )
 
-  const getUserData = async (): Promise<any> => {
+  const getUserData = async (): Promise<void> => {
     try {
       setInitialLoading(true)
       const userData = await whoAmI()
@@ -92,6 +112,18 @@ export const LayoutContextProvider: FC<any> = ({ children }) => {
   return (
     <LayoutContext.Provider value={{ loginUserData, setLoginUserData }}>
       {children}
+      <ToastContainer
+       position="top-right"
+       autoClose={5000}
+       hideProgressBar={false}
+       newestOnTop={false}
+       closeOnClick rtl={false}
+       pauseOnFocusLoss
+       draggable
+       pauseOnHover={true}
+       className="toast-container"
+       toastClassName="dark-toast"
+       style={{ zIndex: 99999 }} />
     </LayoutContext.Provider>
   )
 }

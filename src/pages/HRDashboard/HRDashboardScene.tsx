@@ -3,6 +3,7 @@ import TableComponent from '../../components/TableComponent'
 import Modal from '../../components/Modal'
 import { Button } from 'antd'
 import EventForm from '../../components/modals/eventModal'
+import { EventStatus } from '../../utils/types'
 
 interface HRDashboardSceneProps {
   data: any
@@ -42,6 +43,7 @@ const HRDashboardScene: FC<HRDashboardSceneProps> = (props) => {
         <h3>Location: </h3>
         <p>Postal Code: {selectedEvent?.proposedLocation?.postalCode}</p>
         <p>Street Name: {selectedEvent?.proposedLocation?.streetName}</p>
+        {selectedEvent?.status === EventStatus.REJECTED && <p>Remarks : {selectedEvent?.remarks}</p>}
       </Modal>
       <EventForm
         isModelOpen={isCreateEventModelOpen}

@@ -59,7 +59,7 @@ const HRDashboardContainer: FC = () => {
     }
   ]
 
-  const handleModal = (record: any): any => {
+  const handleModal = (record: any): void => {
     setIsModelOpen(true)
     const selectedEvt = HREventList.find((evt: any) => evt?.id === record?.id)
     setSelectedEvent(selectedEvt)
@@ -75,8 +75,8 @@ const HRDashboardContainer: FC = () => {
     setIsCreateEventModelOpen(false)
   }
 
-  const action = (record: any): any => (
-    <Button type="primary" onClick={() => handleModal(record)}>View</Button>
+  const action = (record: any): JSX.Element => (
+    <Button type="primary" onClick={() => { handleModal(record) }}>View</Button>
   )
 
   const getHREvents = async (showLoader: boolean): Promise<any> => {
@@ -93,7 +93,7 @@ const HRDashboardContainer: FC = () => {
     }
   }
 
-  const getVendorList = async (): Promise<any> => {
+  const getVendorList = async (): Promise<void> => {
     try {
       const res = await getVendorListAPI()
       if (res?.status === 'success') {

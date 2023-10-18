@@ -26,7 +26,7 @@ export const CreateEventschema = yup.object().shape({
 })
 
 export interface UpdateEventSchemaInput {
-  confirmedDate?: Date | string
+  confirmedDate?: string
   remarks?: string
 }
 
