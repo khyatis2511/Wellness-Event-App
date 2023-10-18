@@ -37,6 +37,7 @@ const VendorDashboardScene: FC<VendorDashboardSceneProps> = (props) => {
         <h3>Location: </h3>
         <p>Postal Code: {selectedEvent?.proposedLocation?.postalCode}</p>
         <p>Street Name: {selectedEvent?.proposedLocation?.streetName}</p>
+        {selectedEvent?.status === EventStatus.REJECTED && <p>Remarks :{selectedEvent?.remarks}</p>}
         {selectedEvent?.status === EventStatus.PENDING &&
         <>
           <Button type="primary" onClick={() => { setEventAction(EventStatus.APPROVED) }}>

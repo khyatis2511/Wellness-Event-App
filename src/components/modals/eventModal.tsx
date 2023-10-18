@@ -1,20 +1,22 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Form, Input, DatePicker, Button, Select } from 'antd'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import Modal from '../Modal'
 import dayjs from 'dayjs'
-import { LayoutContext } from '../context/layoutContext'
+import { LayoutContext, toasterConfig } from '../context/layoutContext'
 import { createEventAPI } from '../../utils/api'
 import { formatDate } from '../../utils/helpers'
-import { dateFormat } from '../../utils/constants'
+import { SUCCESS_MESSAGE, dateFormat } from '../../utils/constants'
 import { CreateEventschema, type CreateEventschemaInputs } from '../../utils/schema/eventSchema'
+import { type DropdownObject } from '../../utils/types'
+import { toast } from 'react-toastify'
 interface EventFormProps {
   isModelOpen: boolean
   onClose: () => void
-  vendorOption: any
+  vendorOption: DropdownObject[]
   onSubmitClose: () => void
 }
 
@@ -31,7 +33,7 @@ const EventForm: React.FC<EventFormProps> = ({ isModelOpen, onClose, onSubmitClo
     resolver: yupResolver(CreateEventschema)
   })
 
-  const onSubmit = async (values: CreateEventschemaInputs): Promise<any> => {
+  const onSubmit = async (values: CreateEventschemaInputs): Promise<void> => {
     try {
       setSubmitLoading(true)
       const payload = {
@@ -48,10 +50,13 @@ const EventForm: React.FC<EventFormProps> = ({ isModelOpen, onClose, onSubmitClo
       const res = await createEventAPI(payload)
       if (res?.status === 'success') {
         onSubmitClose()
+        toast.success(SUCCESS_MESSAGE.event.create, toasterConfig)
       }
       setSubmitLoading(false)
-    } catch (error) {
+    } catch (error: any) {
       setSubmitLoading(false)
+      toast.error(error.message, toasterConfig)
+
       console.error('onsubmit event: ', error)
     }
   }
@@ -168,7 +173,7 @@ const EventForm: React.FC<EventFormProps> = ({ isModelOpen, onClose, onSubmitClo
             render={({ field }) => (
               <Select
                 {...field}
-                placeholder="Select Vendor"
+                placeholder={(<>Select Vendor</>)}
                 style={{ width: 120 }}
                 options={vendorOption}
               />

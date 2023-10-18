@@ -3,10 +3,11 @@ import React, { useContext, useState, type FC } from 'react'
 import { useCookies } from 'react-cookie'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { LayoutContext } from '../../components/context/layoutContext'
+import { LayoutContext, toasterConfig } from '../../components/context/layoutContext'
 import { loginAPI, whoAmI } from '../../utils/api'
 import { LoginSchema, type LoginSchemaInputs } from '../../utils/schema/loginSchema'
 import LoginScene from './loginScene'
+import { toast } from 'react-toastify'
 
 const LoginContainer: FC = () => {
   const [submitLoading, setSubmitLoading] = useState(false)
@@ -44,8 +45,9 @@ const LoginContainer: FC = () => {
         }
       }
       setSubmitLoading(false)
-    } catch (error) {
+    } catch (error: any) {
       console.error('login error: ', error)
+      toast.error(error.message, toasterConfig)
       setSubmitLoading(false)
     }
   }
